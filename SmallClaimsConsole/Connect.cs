@@ -10,16 +10,20 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using NLog;
 using NLog.Internal;
+using NAHL.D365.SQLLogger;
 
 namespace SmallClaimsConsole
 {
     class Connect
     {
         public static Logger localNLog;
+        public static NAHLLogger LoggerSQL;
+
         public string connectionstring;
-        public Connect(string _connectionstring, Logger logger)
+        public Connect(string _connectionstring, Logger logger, NAHLLogger loggerSQL)
         {
             localNLog = logger;
+            LoggerSQL = loggerSQL;
             connectionstring = _connectionstring;
         }
 
@@ -32,6 +36,7 @@ namespace SmallClaimsConsole
             CrmServiceClient serviceClient = new CrmServiceClient(connection);
 
             Console.WriteLine("Connected Org Friendly Name : " + serviceClient.ConnectedOrgFriendlyName);
+            LoggerSQL.Info("Connected Org Friendly Name : " + serviceClient.ConnectedOrgFriendlyName);
             localNLog.Info("Connected Org Friendly Name : " + serviceClient.ConnectedOrgFriendlyName);
             localNLog.Info("CrmConnectOrgUriActual :" + serviceClient.CrmConnectOrgUriActual);
             localNLog.Info("Service Is Ready :  " + serviceClient.IsReady);
@@ -60,6 +65,7 @@ namespace SmallClaimsConsole
                         if (WhoAmIid != Guid.Empty)
                         {
                             localNLog.Info("Successful connection to CRM");
+                            LoggerSQL.Info("Successful connection to CRM");
                             //Logger.Info("WhoAmI : " + WhoAmIid);
                             Entity user = organizationService.Retrieve("systemuser", WhoAmIid, new ColumnSet(true));
                             if (user != null)
@@ -70,6 +76,8 @@ namespace SmallClaimsConsole
                             else
                             {
                                 localNLog.Info("Unable to get user from CRM : WhoAmI request failed");
+                                LoggerSQL.Info("Unable to get user from CRM : WhoAmI request failed");
+
                             }
                         }
                     }
@@ -80,6 +88,10 @@ namespace SmallClaimsConsole
                     localNLog.Info("Last CRM Error : " + serviceClient.LastCrmError);
                     localNLog.Info("Last CRM Exception : " + serviceClient.LastCrmException);
                     localNLog.Info("Service was not ready for initialisation : IOrganizationService provision failed. Exiting");
+
+                    LoggerSQL.Info("Last CRM Error : " + serviceClient.LastCrmError);
+                    LoggerSQL.Info("Last CRM Exception : " + serviceClient.LastCrmException);
+                    LoggerSQL.Info("Service was not ready for initialisation : IOrganizationService provision failed. Exiting");
                 }
 
             }
@@ -87,18 +99,21 @@ namespace SmallClaimsConsole
             {
                 Console.WriteLine("Error : " + ex.Message);
                 localNLog.Fatal(ex.Message);
+                LoggerSQL.Fatal(ex.Message);
                 throw;
             }
             catch (CommunicationException ex)
             {
                 Console.WriteLine("Error : " + ex.Message);
                 localNLog.Fatal(ex.Message);
+                LoggerSQL.Fatal(ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error : " + ex.Message);
                 localNLog.Fatal(ex.Message);
+                LoggerSQL.Fatal(ex.Message);
                 throw;
             }
 

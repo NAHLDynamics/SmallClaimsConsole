@@ -155,7 +155,7 @@ namespace SmallClaimsConsole
             {
                 qe.Criteria.AddCondition(condEx);
             }
-            qe.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, 0));
+            //qe.Criteria.AddCondition(new ConditionExpression("statecode", ConditionOperator.Equal, 0));
 
             try
             {
@@ -558,7 +558,7 @@ namespace SmallClaimsConsole
 
             foreach (OptionMetadata optionMeta in picklistMetadata.OptionSet.Options)
             {
-                if (optionMeta.Label.UserLocalizedLabel.Label == optionLabel)
+                if (optionMeta.Label.UserLocalizedLabel.Label.ToLower() == optionLabel.ToLower())
                 {
                     optionsetValue = optionMeta.Value.Value;
                 }

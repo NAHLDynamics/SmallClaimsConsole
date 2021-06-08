@@ -24,11 +24,10 @@ namespace SmallClaimsConsole
             Entity DocumentProcessor = new Entity("ptl_documentprocessor");
             DocumentProcessor["ptl_matter"] = new EntityReference("incident", MatterLookup.Id);
             DocumentProcessor["ptl_description"] = Subject;
-            DocumentProcessor["ptl_folder"] = "Correspondence";
+            DocumentProcessor["ptl_folder"] = "Small Claims";
             DocumentProcessor["ptl_filename"] = Filename;
 
             var NewDocProcessorRecord = service.Create(DocumentProcessor);
-
             CreateRecordAttachment(NewDocProcessorRecord, Filename, Filename, DocumentBody, MimeType, "ptl_documentprocessor");
 
             DocumentProcessor = service.Retrieve("ptl_documentprocessor", NewDocProcessorRecord, new ColumnSet("statecode", "statuscode"));

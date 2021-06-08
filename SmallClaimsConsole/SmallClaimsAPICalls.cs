@@ -72,7 +72,7 @@ namespace SmallClaimsConsole
             if (endpoint.Name == null)
                 throw new Exception(string.Format("Unable to get Endpoint by name {0} . No parameters found!", callTypeName));
 
-            if (!setOAuthToken())
+            if (OAuthToken == null && !setOAuthToken())
                 throw new Exception(string.Format("Unable to set OAuth token!"));
 
             try
@@ -122,6 +122,12 @@ namespace SmallClaimsConsole
                 if (response.Content != "")
                 {
                     APIResponse = JObject.Parse(response.Content);
+                    if (APIResponse.ToString().Contains("Invalid token."))
+                    {
+                        OAuthToken = null;
+                        return ServiceCall(callTypeName, callDataJson, paramlist);
+                    }
+
                     return true;
                 }
                 else

@@ -543,8 +543,16 @@ namespace SmallClaimsConsole
                                             string claimstatus = smallClaimCalls.APIResponse["claimStatus"];
                                             updateSmallClaimInformation(smallclaiminfo, claimid, claimstatus, smallClaimCalls.APIResponse, smallClaimCalls.APIResponse.ToString(Formatting.None));
 
-                                            checkForNewMessages(smallClaimCalls, smallclaiminfo, claimid);
-                                            checkForNewDocuments(smallClaimCalls, smallclaiminfo, claimid);
+                                            try
+                                            {
+                                                checkForNewMessages(smallClaimCalls, smallclaiminfo, claimid);
+                                                checkForNewDocuments(smallClaimCalls, smallclaiminfo, claimid);
+                                            }
+                                            catch 
+                                            {
+                                                //Issue with certain claims at this stage through API for retrieving messages. Purpose of this is purely to update compensator details at an earlier point so can just be skipped in these circumstances
+                                            }
+                                            
                                         }
                                         else
                                         {
